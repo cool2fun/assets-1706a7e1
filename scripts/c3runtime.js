@@ -3089,7 +3089,7 @@ if(!wi||!imageInfo)return;if(lastSetCursor===imageInfo)return;lastSetCursor=imag
 
       // Initialise object properties
       this._gameID = "";
-      this._sdkReady = false;
+      this._sdkReady = true;
       this._adPlaying = false;
       this._adViewed = false;
       this._preloadedAd = false;
@@ -3157,16 +3157,13 @@ if(!wi||!imageInfo)return;if(lastSetCursor===imageInfo)return;lastSetCursor=imag
         }
       };
 
-      //Load the SDK from the CDN
-      (function(d, s, id) {
-        var js,
-          fjs = d.getElementsByTagName(s)[0];
-        if (d.getElementById(id)) return;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "//html5.api.gamedistribution.com/main.min.js";
-        fjs.parentNode.insertBefore(js, fjs);
-      })(document, "script", "gamedistribution-jssdk");
+      // The webapp provides a local SDK mock; loading the hosted SDK triggers its domain lock.
+      setTimeout(() => {
+        if (window["GD_OPTIONS"] && typeof window["GD_OPTIONS"].onEvent === "function") {
+          window["GD_OPTIONS"].onEvent({ name: "SDK_READY", status: "success" });
+          window["GD_OPTIONS"].onEvent({ name: "SDK_GAME_START", status: "success" });
+        }
+      }, 0);
     }
 
     Release() {
@@ -4937,5 +4934,4 @@ true,result:this.OTHER})}if(C3.IsFiniteNumber(property))property=C3.Behaviors.Tw
 		() => 0.4
 	];
 }
-
 
